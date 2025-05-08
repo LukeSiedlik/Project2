@@ -1,12 +1,25 @@
 from logic import GradingModel
 
+
 class GradingController:
-    def __init__(self, view):
+    """
+    The GradingController class manages the interactions between the gui and the logic.
+    It handles the submission of grades, validation, and calculation of the final score.
+    """
+    def __init__(self, view: "GradingView") -> None:
+        """
+        Initializes the controller by accepting a view instance and creating a model instance.
+        Args:
+            view (GradingView): The view instance that the controller will interact with.
+        """
         self.view = view
         self.model = GradingModel()
 
-    def submit_scores(self):
-        """Handles the submission of scores from the view."""
+    def submit_scores(self) -> None:
+        """
+        Handles the submission of scores from the view, including validation of inputs,
+        score calculation, and saving the data.
+        """
         name = self.view.name_input.text().strip()
         attempts = self.view.attempts_input.text().strip()
 
@@ -19,7 +32,7 @@ class GradingController:
             return
 
         attempts = int(attempts)
-        scores = []
+        scores: list[int] = []
 
         for i in range(attempts):
             score_text = self.view.score_inputs[i].text().strip()
@@ -40,4 +53,5 @@ class GradingController:
         final_score = self.model.calculate_final_score([int(s) for s in scores if s != ""])
 
         self.model.save_data(name, scores, final_score)
+        self.view.clear_fields()
         self.view.show_success("Submitted")
